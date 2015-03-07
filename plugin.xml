@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<plugin
+  xmlns="http://apache.org/cordova/ns/plugins/1.0"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  id="com.wordsbaking.cordova.fix-wp-bouncing"
+  version="0.1.0">
+  <name>TTS</name>
+  <description>Cordova Fix Windows Phone Bouncing Plugin</description>
+  <author>VILIC VANE</author>
+  <license>MIT</license>
+  <keywords>cordova,wp,bouncing</keywords>
+  <repo>https://github.com/vilic/cordova-plugin-fix-wp-bouncing.git</repo>
+  <issue>https://github.com/vilic/cordova-plugin-fix-wp-bouncing/issues</issue>
+
+  <js-module src="www/fix-wp-bouncing.js" name="fix-wp-bouncing">
+    <clobbers target="FixWPBouncing" />
+  </js-module>
+
+  <!-- windows phone 8 -->
+  <platform name="wp8">
+    <config-file target="config.xml" parent="/*">
+      <feature name="FixWPBouncing">
+        <param name="wp-package" value="FixWPBouncing"/>
+        <param name="onload" value="true" />
+      </feature>
+    </config-file>
+
+    <source-file src="src/LinqToVisualTree.cs" />
+    <source-file src="src/FixWPBouncing.cs" />
+  </platform>
+</plugin>
