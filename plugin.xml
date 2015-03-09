@@ -4,7 +4,7 @@
   xmlns="http://apache.org/cordova/ns/plugins/1.0"
   xmlns:android="http://schemas.android.com/apk/res/android"
   id="com.wordsbaking.cordova.fix-wp-bouncing"
-  version="0.1.0">
+  version="0.1.1">
   <name>TTS</name>
   <description>Cordova Fix Windows Phone Bouncing Plugin</description>
   <author>VILIC VANE</author>

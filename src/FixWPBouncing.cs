@@ -11,17 +11,12 @@
 using LinqToVisualTree;
 using Microsoft.Phone.Controls;
 using System;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using WPCordovaClassLib;
-using WPCordovaClassLib.Cordova;
 using WPCordovaClassLib.Cordova.Commands;
-using WPCordovaClassLib.Cordova.JSON;
 
 namespace Cordova.Extension.Commands {
     class FixWPBouncing : BaseCommand {
@@ -37,21 +32,25 @@ namespace Cordova.Extension.Commands {
             browser = cordovaViewGrid.FindName("CordovaBrowser") as WebBrowser;
 
             var border = browser.Descendants<Border>().Last() as Border;
+
             border.ManipulationDelta += border_ManipulationDelta;
+            border.ManipulationCompleted += border_ManipulationCompleted;
+        }
+
+        void border_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e) {
+            browser.InvokeScript("eval", "FixWPBouncing.onmanipulationcompleted()");
         }
 
         void border_ManipulationDelta(object sender, ManipulationDeltaEventArgs e) {
             if (e.DeltaManipulation.Translation.Y != 0) {
-                var status = browser.InvokeScript("eval", "FixWPBouncing._targetStatus") as string;
+                var status = browser.InvokeScript("eval", "FixWPBouncing.onmanipulationdelta()") as string;
                 
-                if (status == "top" || status == "both") {
-                    if (e.DeltaManipulation.Translation.Y > 0) {
+                if (e.DeltaManipulation.Translation.Y > 0) {
+                    if (status == "top" || status == "both") {
                         e.Handled = true;
                     }
-                }
-                
-                if (status == "bottom" || status == "both") {
-                    if (e.DeltaManipulation.Translation.Y < 0) {
+                } else {
+                    if (status == "bottom" || status == "both") {
                         e.Handled = true;
                     }
                 }

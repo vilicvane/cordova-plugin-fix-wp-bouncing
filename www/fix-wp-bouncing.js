@@ -10,52 +10,43 @@
 
 */
 
-exports._target = null;
-exports._targetStatus = '';
-
-var pointerSupport;
-var POINTER_DOWN, POINTER_MOVE, POINTER_UP, POINTER_CANCEL;
+var POINTER_DOWN;
 
 if (navigator.pointerEnabled) {
-    pointerSupport = true;
     POINTER_DOWN = 'pointerdown';
-    POINTER_MOVE = 'pointermove';
-    POINTER_UP = 'pointerup';
-    POINTER_CANCEL = 'pointercancel';
 } else if (navigator.msPointerEnabled) {
-    pointerSupport = true;
     POINTER_DOWN = 'MSPointerDown';
-    POINTER_MOVE = 'MSPointerMove';
-    POINTER_UP = 'MSPointerUp';
-    POINTER_CANCEL = 'MSPointerCancel';
-} else {
-    pointerSupport = false;
 }
 
+exports.target = null;
+
+exports.onmanipulationdelta = function () {
+    if (!exports.target) {
+        return '';
+    }
+
+    var target = exports.target;
+
+    var top = target.scrollTop == 0;
+    var bottom = target.scrollTop + target.clientHeight == target.scrollHeight;
+
+    return top ? bottom ? 'both' : 'top': bottom ? 'bottom' : '';
+};
+
+exports.onmanipulationcompleted = function () {
+    exports.target = null;
+};
+
 exports.fix = function (target) {
+    if (!POINTER_DOWN) {
+        return;
+    }
+
     if (!(target instanceof HTMLElement) && target.length) {
         target = target[0];
     }
 
-    target.addEventListener(POINTER_DOWN, startUpdating, false);
-    target.addEventListener(POINTER_UP, stopUpdating, false);
-    target.addEventListener(POINTER_CANCEL, stopUpdating, false);
-
-    function startUpdating() {
-        exports._target = target;
-        updateTargetStatus();
-        target.addEventListener(POINTER_MOVE, updateTargetStatus, false);
-    }
-
-    function stopUpdating() {
-        exports._target = null;
-        exports._targetStatus = '';
-        target.removeEventListener(POINTER_MOVE, updateTargetStatus, false);
-    }
-
-    function updateTargetStatus() {
-        var top = target.scrollTop == 0;
-        var bottom = target.scrollTop + target.clientHeight == target.scrollHeight;
-        exports._targetStatus = top ? bottom ? 'both' : 'top': bottom ? 'bottom' : '';
-    }
+    target.addEventListener(POINTER_DOWN, function () {
+        exports.target = target;
+    }, false);
 };
